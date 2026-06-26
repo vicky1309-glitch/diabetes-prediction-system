@@ -1,0 +1,48 @@
+import React from 'react';
+import './ResultCard.css';
+
+export default function ResultCard({ result }) {
+  const { isDiabetic, prediction, confidence, timestamp } = result;
+  const pct = confidence;
+  const time = new Date(timestamp + 'Z').toLocaleString();
+
+  return (
+    <div className={`result-card fade-in ${isDiabetic ? 'result-card--risk' : 'result-card--safe'}`}>
+      {/* ── Status icon ── */}
+      <div className="result-icon">{isDiabetic ? '⚠️' : '✅'}</div>
+
+      {/* ── Prediction label ── */}
+      <h3 className="result-label">{prediction}</h3>
+
+      {/* ── Confidence gauge ── */}
+      <div className="confidence-wrap">
+        <div className="confidence-label">
+          <span>Confidence</span>
+          <span className="confidence-pct">{pct}%</span>
+        </div>
+        <div className="confidence-bar-bg">
+          <div
+            className="confidence-bar-fill"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+      </div>
+
+      {/* ── Advisory ── */}
+      <p className="result-advisory">
+        {isDiabetic
+          ? 'Your metrics suggest an elevated diabetes risk. Please consult a healthcare professional for a full evaluation.'
+          : 'Your metrics fall within a lower-risk range. Maintain a healthy lifestyle and schedule regular check-ups.'
+        }
+      </p>
+
+      {/* ── Meta ── */}
+      <p className="result-time">Assessed: {time}</p>
+
+      {/* ── Disclaimer ── */}
+      <p className="result-disclaimer">
+        🔬 For educational purposes only — not medical advice.
+      </p>
+    </div>
+  );
+}

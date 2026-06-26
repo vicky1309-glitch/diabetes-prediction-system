@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+venv/
+env/
+.env
+*.egg-info/
+dist/
+build/
+
+# Flask
+instance/
+*.db
+
+# Node / React
+node_modules/
+frontend/build/
+.npm
+
+# Editors
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Model artefacts — commit model.pkl intentionally if you want
+# model/model.pkl

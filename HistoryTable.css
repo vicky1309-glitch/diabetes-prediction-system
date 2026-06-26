@@ -1,0 +1,80 @@
+"""
+Diabetes Prediction Model Training Script
+==========================================
+Uses the Pima Indians Diabetes Dataset to train a Logistic Regression model.
+Run this script once to generate model.pkl before starting the Flask server.
+"""
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import pickle
+import os
+
+# ─── Paths ────────────────────────────────────────────────────────────────────
+BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
+DATASET    = os.path.join(BASE_DIR, "..", "dataset", "diabetes.csv")
+MODEL_DIR  = os.path.join(BASE_DIR, "..", "model")
+MODEL_PATH = os.path.join(MODEL_DIR, "model.pkl")
+
+os.makedirs(MODEL_DIR, exist_ok=True)
+
+# ─── 1. Load Dataset ──────────────────────────────────────────────────────────
+print("Loading dataset …")
+df = pd.read_csv(DATASET)
+print(f"  Shape: {df.shape}")
+print(f"  Columns: {list(df.columns)}")
+print(df.head())
+
+# ─── 2. Handle Missing / Zero Values ─────────────────────────────────────────
+# In the Pima dataset, zeros in these columns represent missing data.
+zero_cols = ["Glucose", "BloodPressure", "SkinThickness", "Insulin", "BMI"]
+print("\nReplacing physiologically impossible zero values with column medians …")
+for col in zero_cols:
+    n_zeros = (df[col] == 0).sum()
+    if n_zeros:
+        median = df[df[col] != 0][col].median()
+        df[col] = df[col].replace(0, median)
+        print(f"  {col}: replaced {n_zeros} zeros → median={median:.2f}")
+
+# ─── 3. Features & Target ─────────────────────────────────────────────────────
+feature_cols = [
+    "Pregnancies", "Glucose", "BloodPressure", "SkinThickness",
+    "Insulin", "BMI", "DiabetesPedigreeFunction", "Age"
+]
+X = df[feature_cols]
+y = df["Outcome"]
+
+# ─── 4. Train / Test Split ────────────────────────────────────────────────────
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.20, random_state=42, stratify=y
+)
+print(f"\nTrain size: {X_train.shape[0]}  |  Test size: {X_test.shape[0]}")
+
+# ─── 5. Scale Features ───────────────────────────────────────────────────────
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled  = scaler.transform(X_test)
+
+# ─── 6. Train Logistic Regression ────────────────────────────────────────────
+print("\nTraining Logistic Regression …")
+model = LogisticRegression(max_iter=1000, random_state=42, C=1.0)
+model.fit(X_train_scaled, y_train)
+
+# ─── 7. Evaluate ─────────────────────────────────────────────────────────────
+y_pred = model.predict(X_test_scaled)
+acc    = accuracy_score(y_test, y_pred)
+print(f"\nAccuracy: {acc * 100:.2f}%")
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=["No Diabetes", "Diabetes"]))
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# ─── 8. Save Model + Scaler ──────────────────────────────────────────────────
+bundle = {"model": model, "scaler": scaler, "accuracy": acc, "features": feature_cols}
+with open(MODEL_PATH, "wb") as f:
+    pickle.dump(bundle, f)
+print(f"\nModel saved → {MODEL_PATH}")

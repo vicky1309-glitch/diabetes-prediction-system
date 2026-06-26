@@ -1,0 +1,13 @@
+import React from 'react';
+import './Notification.css';
+
+const ICONS = { success: '✅', error: '❌', warn: '⚠️', info: 'ℹ️' };
+
+export default function Notification({ msg, type = 'success' }) {
+  return (
+    <div className={`notification notification--${type}`}>
+      <span className="notification-icon">{ICONS[type]}</span>
+      <p className="notification-msg">{msg}</p>
+    </div>
+  );
+}

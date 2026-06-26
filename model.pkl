@@ -1,0 +1,145 @@
+import React, { useState } from 'react';
+import './PredictionForm.css';
+
+/* ─── Field definitions ────────────────────────────────────────────────────── */
+const FIELDS = [
+  {
+    key: 'pregnancies', label: 'Pregnancies', unit: 'count',
+    min:0, max:20, step:1, placeholder:'0 – 20',
+    hint:'Number of times pregnant'
+  },
+  {
+    key: 'glucose', label: 'Glucose', unit: 'mg/dL',
+    min:0, max:300, step:1, placeholder:'70 – 200',
+    hint:'Plasma glucose concentration (2-hour OGTT)'
+  },
+  {
+    key: 'bloodPressure', label: 'Blood Pressure', unit: 'mm Hg',
+    min:0, max:150, step:1, placeholder:'60 – 120',
+    hint:'Diastolic blood pressure'
+  },
+  {
+    key: 'skinThickness', label: 'Skin Thickness', unit: 'mm',
+    min:0, max:100, step:1, placeholder:'10 – 60',
+    hint:'Triceps skin fold thickness'
+  },
+  {
+    key: 'insulin', label: 'Insulin', unit: 'μU/mL',
+    min:0, max:900, step:1, placeholder:'0 – 500',
+    hint:'2-hour serum insulin'
+  },
+  {
+    key: 'bmi', label: 'BMI', unit: 'kg/m²',
+    min:0, max:70, step:0.1, placeholder:'18.5 – 45',
+    hint:'Body mass index'
+  },
+  {
+    key: 'diabetesPedigree', label: 'Diabetes Pedigree Function', unit: '',
+    min:0, max:2.5, step:0.001, placeholder:'0.000 – 2.500',
+    hint:'Genetic likelihood score based on family history'
+  },
+  {
+    key: 'age', label: 'Age', unit: 'years',
+    min:1, max:120, step:1, placeholder:'21 – 81',
+    hint:'Age in years'
+  },
+];
+
+const INITIAL = Object.fromEntries(FIELDS.map(f => [f.key, '']));
+
+/* ─── Component ────────────────────────────────────────────────────────────── */
+export default function PredictionForm({ onSubmit, loading }) {
+  const [values, setValues] = useState(INITIAL);
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const errs = {};
+    FIELDS.forEach(({ key, label, min, max }) => {
+      const v = values[key];
+      if (v === '' || v === undefined) {
+        errs[key] = `${label} is required`;
+      } else {
+        const n = parseFloat(v);
+        if (isNaN(n) || n < min || n > max)
+          errs[key] = `Must be between ${min} and ${max}`;
+      }
+    });
+    return errs;
+  };
+
+  const handleChange = (key, val) => {
+    setValues(prev => ({ ...prev, [key]: val }));
+    if (errors[key]) setErrors(prev => ({ ...prev, [key]: undefined }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    onSubmit(values);
+  };
+
+  const handleReset = () => { setValues(INITIAL); setErrors({}); };
+
+  /* Prefill with a sample diabetic patient for demo */
+  const fillSample = (type) => {
+    const samples = {
+      diabetic:    { pregnancies:'6',glucose:'148',bloodPressure:'72',skinThickness:'35',insulin:'0',bmi:'33.6',diabetesPedigree:'0.627',age:'50' },
+      nonDiabetic: { pregnancies:'1',glucose:'89', bloodPressure:'66',skinThickness:'23',insulin:'94',bmi:'28.1',diabetesPedigree:'0.167',age:'21' },
+    };
+    setValues(samples[type]);
+    setErrors({});
+  };
+
+  return (
+    <div className="form-card">
+      <div className="form-header">
+        <h2 className="form-title">Health Metrics</h2>
+        <p className="form-subtitle">Fill in your values or load a sample to explore.</p>
+        <div className="sample-btns">
+          <button type="button" className="btn-sample btn-sample--risk"   onClick={() => fillSample('diabetic')}>    Load High-Risk Sample</button>
+          <button type="button" className="btn-sample btn-sample--normal" onClick={() => fillSample('nonDiabetic')}>Load Low-Risk Sample</button>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="fields-grid">
+          {FIELDS.map(({ key, label, unit, min, max, step, placeholder, hint }) => (
+            <div key={key} className={`field ${errors[key] ? 'field--error' : ''}`}>
+              <label className="field-label" htmlFor={key}>
+                {label}
+                {unit && <span className="field-unit">{unit}</span>}
+              </label>
+              <input
+                id={key}
+                type="number"
+                className="field-input"
+                min={min} max={max} step={step}
+                placeholder={placeholder}
+                value={values[key]}
+                onChange={e => handleChange(key, e.target.value)}
+                disabled={loading}
+              />
+              {errors[key]
+                ? <p className="field-error">{errors[key]}</p>
+                : <p className="field-hint">{hint}</p>
+              }
+            </div>
+          ))}
+        </div>
+
+        <div className="form-actions">
+          <button type="button" className="btn-reset" onClick={handleReset} disabled={loading}>
+            Reset
+          </button>
+          <button type="submit" className="btn-predict" disabled={loading}>
+            {loading
+              ? <><span className="spinner" /> Predicting…</>
+              : '🔬 Predict Diabetes'
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
