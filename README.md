@@ -1,12 +1,12 @@
-# 🩺 Diabetes Prediction System
+#  Diabetes Prediction System
 
 A full-stack AI/ML web application that predicts diabetes risk using a **Logistic Regression** model trained on the **Pima Indians Diabetes Dataset**.
 
-> ⚠️ **Disclaimer:** This tool is for educational purposes only. It is not medical advice. Always consult a qualified physician.
+>  **Disclaimer:** This tool is for educational purposes only. It is not medical advice. Always consult a qualified physician.
 
 ---
 
-## 📸 Screenshots
+##  Screenshots
 
 | Dashboard & Prediction Form | Result Card | History Tab |
 |---|---|---|
@@ -14,7 +14,7 @@ A full-stack AI/ML web application that predicts diabetes risk using a **Logisti
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 | Layer | Technology |
 |---|---|
@@ -26,7 +26,7 @@ A full-stack AI/ML web application that predicts diabetes risk using a **Logisti
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 diabetes-prediction-system/
@@ -69,7 +69,7 @@ diabetes-prediction-system/
 
 ---
 
-## ⚡ Quick Start (VS Code)
+##  Quick Start (VS Code)
 
 ### Prerequisites
 
@@ -160,7 +160,7 @@ React runs on **http://localhost:3000**
 
 ---
 
-## 🌐 API Documentation
+##  API Documentation
 
 ### Base URL
 ```
@@ -230,7 +230,7 @@ Clears all prediction history from the database.
 
 ---
 
-## 🤖 Machine Learning Workflow
+##  Machine Learning Workflow
 
 ```
 Raw Dataset (768 rows, 9 columns)
@@ -255,13 +255,13 @@ POST /predict → scale input → predict → return result + confidence
 
 ---
 
-## 🚀 Deploy to GitHub
+##  Deploy to GitHub
 
 ```bash
 # Initialize git (if not already done)
 git init
 git add .
-git commit -m "🚀 Initial commit: Diabetes Prediction System"
+git commit -m " Initial commit: Diabetes Prediction System"
 
 # Create a new repo on github.com, then:
 git remote add origin https://github.com/YOUR_USERNAME/diabetes-prediction-system.git
@@ -271,7 +271,7 @@ git push -u origin main
 
 ---
 
-## 🔮 Future Enhancements
+##  Future Enhancements
 
 - [ ] Add more ML models (Random Forest, SVM, XGBoost) with comparison dashboard
 - [ ] User authentication and personal health profiles
@@ -285,7 +285,7 @@ git push -u origin main
 
 ---
 
-## 📦 Dependencies
+##  Dependencies
 
 ### Python (`requirements.txt`)
 ```
@@ -304,14 +304,7 @@ react 18, react-dom 18, axios, react-scripts
 
 ---
 
-## 📄 License
-
-MIT © 2024 — Free to use for educational and portfolio purposes.
-
 ---
 
-## 🙌 Acknowledgements
-
-- [Pima Indians Diabetes Database — UCI ML Repository](https://archive.ics.uci.edu/ml/datasets/diabetes)
-- [Scikit-Learn Documentation](https://scikit-learn.org/)
-- [Flask Documentation](https://flask.palletsprojects.com/)
+## REPORTED BY
+VIKNESH V
